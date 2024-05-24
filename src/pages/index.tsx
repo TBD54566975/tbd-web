@@ -2,10 +2,6 @@ import clsx from 'clsx';
 import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
-import HomepageFeatures from '@site/src/components/HomepageFeatures';
-import Heading from '@theme/Heading';
-
-import styles from './index.module.css';
 
 type BlogCardProps = {
   date?: string;
@@ -15,6 +11,104 @@ type BlogCardProps = {
   image?: string | null;
   description?: string;
   size?: 'large' | 'small';
+};
+const hexToRgb = (hex) => {
+  const bigint = parseInt(hex.slice(1), 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+
+  return [r, g, b];
+};
+
+const rgbToHex = (r, g, b) => {
+  return (
+    '#' +
+    [r, g, b]
+      .map((x) => {
+        const hex = x.toString(16);
+        return hex.length === 1 ? '0' + hex : hex;
+      })
+      .join('')
+  );
+};
+
+const darkenColor = (color, factor = 0.1) => {
+  const [r, g, b] = hexToRgb(color);
+  const newR = Math.max(0, Math.min(255, Math.floor(r * (1 - factor))));
+  const newG = Math.max(0, Math.min(255, Math.floor(g * (1 - factor))));
+  const newB = Math.max(0, Math.min(255, Math.floor(b * (1 - factor))));
+  return rgbToHex(newR, newG, newB);
+};
+
+const generateRandomSquares = (count, maxWidth, maxHeight, darkerColor) => {
+  const squares = [];
+
+  const doesOverlap = (square, squares) => {
+    for (let other of squares) {
+      if (
+        !(
+          square.left + square.width < other.left ||
+          square.left > other.left + other.width ||
+          square.top + square.height < other.top ||
+          square.top > other.top + other.height
+        )
+      ) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  for (let i = 0; i < count; i++) {
+    let square;
+    do {
+      const size = Math.floor(Math.random() * 50) + 20; // Random size between 20px and 70px
+      const top = Math.floor(Math.random() * (maxHeight - size));
+      const left = Math.floor(Math.random() * (maxWidth - size));
+
+      square = {
+        width: size,
+        height: size,
+        top,
+        left,
+        backgroundColor: darkerColor,
+        position: 'absolute',
+      };
+    } while (doesOverlap(square, squares));
+
+    squares.push(square);
+  }
+  return squares;
+};
+
+const BackgroundColor = ({ width, height, primaryColor }) => {
+  const totalSize = width + height;
+  const squareCount = totalSize / 4;
+
+  const darkerColor = darkenColor(primaryColor);
+  const squares = generateRandomSquares(
+    squareCount,
+    (width * window.innerWidth) / 100,
+    (height * window.innerHeight) / 100,
+    darkerColor
+  );
+
+  return (
+    <div
+      style={{
+        position: 'relative',
+        width: `${width}vw`,
+        height: `${height}vh`,
+        backgroundColor: primaryColor,
+        overflow: 'hidden',
+      }}
+    >
+      {squares.map((square, index) => (
+        <div key={index} style={square}></div>
+      ))}
+    </div>
+  );
 };
 
 function BlogCard({
@@ -69,6 +163,10 @@ export default function Home(): JSX.Element {
         <BlogCard tags={['Test1', 'Test2', 'Test3']} size="large" />
         <h3>Blog Card - Small</h3>
         <BlogCard tags={['Test1', 'Test2', 'Test3']} />
+        <h3>Square Background component (WIP)</h3>
+        <BackgroundColor width={50} height={50} primaryColor="#FFEC19" />
+        <BackgroundColor width={50} height={50} primaryColor="#00E5FA" />
+        <BackgroundColor width={50} height={50} primaryColor="#9A1AFF" />
       </main>
     </Layout>
   );
