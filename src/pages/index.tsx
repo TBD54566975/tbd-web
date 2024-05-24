@@ -28,7 +28,6 @@ function BlogCard({
 }: BlogCardProps) {
   const cardSizeClass = size === 'large' ? 'max-w-[840px]' : 'max-w-[400px]';
 
-  console.log('card', cardSizeClass);
   return (
     <div
       className={clsx(
@@ -65,8 +64,10 @@ export default function Home(): JSX.Element {
         <h1>TBD Components</h1>
       </header>
 
-      <main>
+      <main className="flex flex-col items-center">
+        <h3>Blog Card - Large</h3>
         <BlogCard tags={['Test1', 'Test2', 'Test3']} size="large" />
+        <h3>Blog Card - Small</h3>
         <BlogCard tags={['Test1', 'Test2', 'Test3']} />
       </main>
     </Layout>
