@@ -1,7 +1,7 @@
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import BlogCard from '../components/BlogCard';
-import TbdBackground from '../components/TBDBackground';
+import TbdBackground from '../TbdBackground';
 
 export default function Home(): JSX.Element {
   const { siteConfig } = useDocusaurusContext();
