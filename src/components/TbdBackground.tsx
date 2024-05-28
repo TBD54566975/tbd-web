@@ -1,4 +1,5 @@
 import React from 'react';
+import BrowserOnly from '@docusaurus/BrowserOnly';
 
 const hexToRgb = (hex: string): [number, number, number] => {
   const bigint = parseInt(hex.slice(1), 16);
@@ -107,19 +108,25 @@ const TbdBackground: React.FC<TbdBackgroundProps> = ({
   );
 
   return (
-    <div
-      style={{
-        position: 'relative',
-        width: `${width}vw`,
-        height: `${height}vh`,
-        backgroundColor: primaryColor,
-        overflow: 'hidden',
+    <BrowserOnly>
+      {() => {
+        return (
+          <div
+            style={{
+              position: 'relative',
+              width: `${width}vw`,
+              height: `${height}vh`,
+              backgroundColor: primaryColor,
+              overflow: 'hidden',
+            }}
+          >
+            {squares.map((square, index) => (
+              <div key={index} style={square}></div>
+            ))}
+          </div>
+        );
       }}
-    >
-      {squares.map((square, index) => (
-        <div key={index} style={square}></div>
-      ))}
-    </div>
+    </BrowserOnly>
   );
 };
 
